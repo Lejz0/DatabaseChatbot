@@ -4,6 +4,8 @@ using Repository;
 using Domain.Identity;
 using Repository.Implementation;
 using Repository.Interface;
+using Service.Interface;
+using Service.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,11 @@ builder.Services.AddDefaultIdentity<ChatApplicationUser>(options => options.Sign
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+
+builder.Services.AddScoped<IDatabaseService, DatabaseService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGroqService, GroqService>();
 
 builder.Services.AddControllersWithViews();
 

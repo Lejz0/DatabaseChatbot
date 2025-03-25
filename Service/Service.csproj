@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DatabaseChatbot.Domain\Domain.csproj" />
-    <ProjectReference Include="..\Repository\Repository.csproj" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Implementation\" />
+    <ProjectReference Include="..\DatabaseChatbot.Domain\Domain.csproj" />
+    <ProjectReference Include="..\Repository\Repository.csproj" />
   </ItemGroup>
 
 </Project>
