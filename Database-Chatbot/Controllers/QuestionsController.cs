@@ -92,38 +92,21 @@ namespace Database_Chatbot.Controllers
         }
 
 
-        //// GET: Questions/Delete/5
-        //public async Task<IActionResult> Delete(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Questions/Delete/5
+        public async Task<IActionResult> Delete(Guid? id, Guid databaseId)
+        {
+            ViewBag.DatabaseId = databaseId;
+            var question = _questionService.GetDetailsForQuestion(id);
+            return View(question);
+        }
 
-        //    var question = await _context.Questions
-        //        .Include(q => q.Database)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (question == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(question);
-        //}
-
-        //// POST: Questions/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(Guid id)
-        //{
-        //    var question = await _context.Questions.FindAsync(id);
-        //    if (question != null)
-        //    {
-        //        _context.Questions.Remove(question);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        // POST: Questions/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id, Guid databaseId)
+        {
+            _questionService.DeleteQuestion(databaseId, id);
+            return RedirectToAction(nameof(Index), new { id = databaseId});
+        }
     }
 }

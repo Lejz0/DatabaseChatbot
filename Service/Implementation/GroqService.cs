@@ -49,7 +49,7 @@ namespace Service.Implementation
                     .GetProperty("content")
                     .GetString();
 
-                return content;
+                return content.Replace("```sql", "").Replace("```", "").Trim();
             }
             else
             {
@@ -66,7 +66,7 @@ namespace Service.Implementation
             {
                 using (var connection = new NpgsqlConnection($"Host={host};Database={databaseName};Username={username};Password={password}"))
                 {
-                    await connection.OpenAsync();
+                    connection.Open();
 
                     using (var cmd = new NpgsqlCommand(query, connection))
                     using (var reader = cmd.ExecuteReader())
@@ -82,8 +82,8 @@ namespace Service.Implementation
                             results.Add($"({string.Join(", ", rowValues)}");
                         }
                     }
+                    connection.Close();
                 }
-
                 return $"[{string.Join(", ", results)}]";
             }
             catch (Exception ex)

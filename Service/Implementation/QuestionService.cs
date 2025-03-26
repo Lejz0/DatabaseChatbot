@@ -29,8 +29,10 @@ namespace Service.Implementation
                 QuestionAnswer = questionAnswer,
             };
 
+            _questionRepository.Insert(questionToAsk);
+
             var database = _databaseRepository.Get(databaseId);
-            var databaseQuestions = database.Questions;
+            var databaseQuestions = database?.Questions;
 
             if (databaseQuestions == null)
             {
@@ -39,14 +41,12 @@ namespace Service.Implementation
 
             databaseQuestions.Add(questionToAsk);
             _databaseRepository.Update(database);
-
-            _questionRepository.Insert(questionToAsk);
         }
 
         public void DeleteQuestion(Guid databaseId, Guid id)
         {
             var database = _databaseRepository.Get(databaseId);
-            var question = _questionRepository.Get(databaseId);
+            var question = _questionRepository.Get(id);
 
             _questionRepository.Delete(question);
             database.Questions?.Remove(question);
@@ -62,7 +62,7 @@ namespace Service.Implementation
         public List<Question> GetQuestionsForDatabase(Guid databaseId)
         {
             var database = _databaseRepository.Get(databaseId);
-            var databaseQuestions = database.Questions;
+            var databaseQuestions = database?.Questions;
 
             if (databaseQuestions == null)
             {

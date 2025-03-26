@@ -104,25 +104,44 @@ namespace Service.Implementation
             {
                 connection.Open();
 
-                string schemaQuery = @"
-                    SELECT table_name
-                    FROM infromation_schema.tables
-                    WHERE table_scheme = 'public'";
+                string tableQuery = @"
+                SELECT table_name 
+                FROM information_schema.tables 
+                WHERE table_schema = 'public'";
 
-                using (var cmd = new NpgsqlCommand(schemaQuery, connection))
-                using (var reader = cmd.ExecuteReader())
+                var tables = new List<string>();
+
+                using (var tableCmd = new NpgsqlCommand(tableQuery, connection))
+                using (var tableReader = tableCmd.ExecuteReader())
                 {
-                    var tables = new List<string>();
-                    while (reader.Read())
+                    while (tableReader.Read())
                     {
-                        tables.Add(reader.GetString(0));
-                    }
-
-                    foreach (var table in tables)
-                    {
-                        schemaBuilder.Append(table);
+                        tables.Add(tableReader.GetString(0));
                     }
                 }
+
+                foreach (var table in tables)
+                {
+                    schemaBuilder.Append($"CREATE TABLE {table} (");
+
+                    string tableSchemaQuery = $@"
+                        SELECT column_name, data_type 
+                        FROM information_schema.columns 
+                        WHERE table_name = '{table}'";
+
+                    using (var tableSchemaCmd = new NpgsqlCommand(tableSchemaQuery, connection))
+                    using (var tableSchemaReader = tableSchemaCmd.ExecuteReader())
+                    {
+                        while(tableSchemaReader.Read())
+                        {
+                            schemaBuilder.Append($"\n {tableSchemaReader["column_name"]} {tableSchemaReader["data_type"]}");
+                        }
+                        schemaBuilder.Append("\n )");
+                    }
+                    schemaBuilder.Append("\n");
+                }
+
+                connection.Close();
             }
             return schemaBuilder.ToString();
         }
