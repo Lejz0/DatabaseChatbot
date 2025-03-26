@@ -85,7 +85,8 @@ namespace Service.Implementation
             {
                 using (var connection = new NpgsqlConnection($"Host={host};Database={databaseName};Username={username};Password={password}"))
                 {
-                    await connection.OpenAsync();
+                    connection.Open();
+                    connection.Close();
                     return true;
                 }
             }

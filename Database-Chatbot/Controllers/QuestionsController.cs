@@ -29,9 +29,10 @@ namespace Database_Chatbot.Controllers
         }
 
         // GET: Questions
-        public async Task<IActionResult> Index(Guid id)
+        public async Task<IActionResult> Index(Guid id, string errorMessage)
         {
             ViewBag.DatabaseId = id;
+            ViewBag.ErrorMessage = errorMessage;
             List<Question> questions = _questionService.GetQuestionsForDatabase(id);
             return View(questions);
         }
@@ -65,7 +66,7 @@ namespace Database_Chatbot.Controllers
                 if (query == "Error")
                 {
                     var errorMessage = "Failed to get an answer from LLM";
-                    return RedirectToAction(nameof(Index), new { id = databaseId, errorMessage = errorMessage});
+                    return RedirectToAction(nameof(Index), new { id = databaseId, errorMessage = errorMessage });
                 }
 
                 string querryResponse = await _groqService.ExecuteQuery(database.Host, database.Database_Name, database.Username, database.Password, query);

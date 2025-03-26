@@ -47,10 +47,18 @@ namespace Database_Chatbot.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                database.Id = Guid.NewGuid();
-                _databaseService.CreateNewDatabase(userId, database);
-                return RedirectToAction(nameof(Index));
+                var databaseConnection = await _databaseService.CheckDatabaseConnection(database.Host, database.Database_Name, database.Username, database.Password);
+                if (databaseConnection.Equals(true))
+                {
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    database.Id = Guid.NewGuid();
+                    _databaseService.CreateNewDatabase(userId, database);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to connect to the database. Please check and re-enter your credentials");
+                }
             }
             return View(database);
         }
@@ -76,9 +84,18 @@ namespace Database_Chatbot.Controllers
 
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                _databaseService.UpdateDatabase(userId, database);
-                return RedirectToAction(nameof(Index));
+                var databaseConnection = await _databaseService.CheckDatabaseConnection(database.Host, database.Database_Name, database.Username, database.Password);
+                if (databaseConnection.Equals(true))
+                {
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    _databaseService.UpdateDatabase(userId, database);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to connect to the database. Please check and re-enter your credentials");
+                }
+
             }
             return View(database);
         }

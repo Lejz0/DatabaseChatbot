@@ -4,11 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>All question and answers</h1>
 
 <p>
-    <a asp-action="Create" asp-route-id="@ViewBag.DatabaseId">Create New</a>
+    <a asp-action="Create" asp-route-id="@ViewBag.DatabaseId">Ask Question</a>
 </p>
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrorMessage
+    </div>
+}
 <table class="table">
     <thead>
         <tr>
